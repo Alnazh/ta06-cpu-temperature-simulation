@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}Simulator{% endblock %}
+
+{% block content %}
+<section class="page-head">
+  <p class="tag">Simulator</p>
+  <h1>Simulasi suhu CPU</h1>
+  <p class="lead">Pilih skenario beban, atur parameter, lalu baca grafik beserta penjelasannya.</p>
+</section>
+
+<noscript><p class="noscript">Halaman ini membutuhkan JavaScript untuk menjalankan simulasi.</p></noscript>
+<div class="page">
+  <div class="presets" aria-label="Contoh kasus cepat">
+    <span class="presets-label">Coba cepat:</span>
+    {% for preset in presets %}
+    <button type="button" class="chip-btn" data-preset='{{ preset|tojson }}' title="{{ preset.hint }}">{{ preset.name }}</button>
+    {% endfor %}
+  </div>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <section class="card" aria-labelledby="scenario-title">
+        <h3 class="card-title" id="scenario-title">Skenario beban</h3>
+        <div class="scenarios">
+          {% for sc in scenarios %}
+          <button type="button" class="btn scenario" data-key="{{ sc.key }}" data-color="{{ sc.color }}"
+                  style="--c: {{ sc.color }}" aria-pressed="{{ 'true' if sc.key == default_scenario else 'false' }}">{{ sc.name }}</button>
+          {% endfor %}
+        </div>
+      </section>
+
+      <section class="card" aria-labelledby="param-title">
+        <div class="card-head">
+          <h3 class="card-title" id="param-title">Parameter</h3>
+          <button type="button" class="btn btn-small" id="reset">Reset</button>
+        </div>
+        <form id="params">
+          {% include "_sliders.html" %}
+        </form>
+      </section>
+    </aside>
+
+    <div class="content">
+      <div class="status" id="status" data-tone="warn" aria-live="polite">
+        <span class="status-dot"></span>
+        <strong id="status-label">-</strong>
+        <span id="status-text">Menghitung simulasi...</span>
+      </div>
+
+      <div class="metrics" aria-live="polite">
+        <article class="card metric" data-tone="red"><span>Suhu puncak</span><strong id="m-peak">-</strong><small id="s-peak"></small></article>
+        <article class="card metric" data-tone="blue"><span>Suhu akhir</span><strong id="m-final">-</strong><small id="s-final"></small></article>
+        <article class="card metric" data-tone="pink"><span>Steady state (teori)</span><strong id="m-steady">-</strong><small>T saat dT/dt = 0</small></article>
+        <article class="card metric" data-tone="purple"><span>Konstanta waktu</span><strong id="m-tau">-</strong><small id="s-tau"></small></article>
+        <article class="card metric" data-tone="green"><span>Galat maks Euler</span><strong id="m-error">-</strong><small id="s-error"></small></article>
+        <article class="card metric" data-tone="cyan"><span>Konstanta k</span><strong id="m-k">-</strong><small>pendinginan, 1/detik</small></article>
+      </div>
+
+      <section class="card chart-card" aria-label="Grafik simulasi">
+        <svg id="chart" viewBox="0 0 760 500" role="img" aria-label="Grafik suhu CPU terhadap waktu"></svg>
+        <p class="error" id="error" role="alert" hidden></p>
+      </section>
+
+      <section class="card" aria-labelledby="read-title">
+        <h3 class="card-title" id="read-title">Membaca grafik ini</h3>
+        <div class="insights" id="insights" aria-live="polite"></div>
+      </section>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}<script src="{{ url_for('static', filename='simulator.js') }}"></script>{% endblock %}

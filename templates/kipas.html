@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Pengaruh Kipas{% endblock %}
+
+{% block content %}
+<section class="page-head">
+  <p class="tag">Pengaruh kipas</p>
+  <h1>Seberapa penting kipas?</h1>
+  <p class="lead">Suhu steady state kalau CPU bekerja 100% terus-menerus, pada berbagai kecepatan kipas.</p>
+</section>
+
+<noscript><p class="noscript">Halaman ini membutuhkan JavaScript untuk menjalankan simulasi.</p></noscript>
+<div class="page">
+  <div class="layout">
+    <aside class="sidebar">
+      <section class="card" aria-labelledby="param-title">
+        <div class="card-head">
+          <h3 class="card-title" id="param-title">Parameter</h3>
+          <button type="button" class="btn btn-small" id="reset">Reset</button>
+        </div>
+        <form id="params">
+          {% include "_sliders.html" %}
+        </form>
+      </section>
+
+      <section class="card" aria-labelledby="formula-title">
+        <h3 class="card-title" id="formula-title">Rumus yang dipakai</h3>
+        <p class="formula">k = 0,015 + 0,03 &times; kipas/100</p>
+        <p class="formula">T<sub>ss</sub> = T<sub>amb</sub> + g &middot; 100 / k</p>
+        <p>Kipas lebih cepat membuat k lebih besar, sehingga suhu steady state lebih rendah dan respon lebih cepat (&tau; = 1/k).</p>
+      </section>
+    </aside>
+
+    <div class="content">
+      <section class="card fan-card" aria-labelledby="bars-title">
+        <h3 class="card-title" id="bars-title">Suhu steady state beban penuh</h3>
+        <div class="bars" id="fans"></div>
+        <ul class="legend">
+          <li class="dot-aman">Aman &lt; {{ warm }} °C</li><li class="dot-hangat">Hangat {{ warm }}&ndash;{{ hot }} °C</li><li class="dot-panas">Panas &ge; {{ hot }} °C</li>
+        </ul>
+        <p class="error" id="error" role="alert" hidden></p>
+      </section>
+
+      <section class="card" aria-labelledby="sum-title">
+        <h3 class="card-title" id="sum-title">Membaca perbandingan ini</h3>
+        <div class="insights" id="insights" aria-live="polite"></div>
+      </section>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}<script src="{{ url_for('static', filename='kipas.js') }}"></script>{% endblock %}
