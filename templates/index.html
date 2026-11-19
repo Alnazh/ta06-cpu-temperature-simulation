@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %}Beranda{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <div class="hero-text">
+    <p class="tag">Simulasi sistem dinamik</p>
+    <h1>Seberapa <mark>panas</mark> CPU laptopmu kalau <mark class="pink">dipaksa kerja?</mark></h1>
+    <p class="lead">Atur kipas, beban CPU, dan suhu ruangan. Grafik dan penjelasannya ikut berubah.</p>
+    <div class="hero-actions">
+      <a class="btn btn-primary" href="{{ url_for('simulator') }}">Buka simulator</a>
+      <a class="btn" href="{{ url_for('model') }}">Pelajari modelnya</a>
+    </div>
+    <ul class="chips" aria-label="Ringkasan proyek">
+      <li>ODE orde 1</li><li>Metode Euler</li><li>{{ scenarios|length }} skenario</li><li>{{ sliders|length }} parameter</li>
+    </ul>
+  </div>
+  <aside class="hero-card" aria-label="Rumus model">
+    <svg class="fan" viewBox="0 0 120 120" aria-hidden="true">
+      <circle cx="60" cy="60" r="56" class="fan-ring"/>
+      <g class="fan-blades">
+        <path d="M60 60 C48 38 56 14 74 16 C80 34 72 52 60 60Z"/>
+        <path d="M60 60 C82 48 106 56 104 74 C86 80 68 72 60 60Z"/>
+        <path d="M60 60 C72 82 64 106 46 104 C40 86 48 68 60 60Z"/>
+        <path d="M60 60 C38 72 14 64 16 46 C34 40 52 48 60 60Z"/>
+      </g>
+      <circle cx="60" cy="60" r="9" class="fan-hub"/>
+    </svg>
+    <p class="eq">dT/dt = &minus;k (T &minus; T<sub>amb</sub>) + g&middot;u(t)</p>
+    <p class="eq-note">k naik saat kipas makin kencang</p>
+  </aside>
+</section>
+
+<div class="ticker" aria-hidden="true">
+  <div><span>SUHU CPU &#9679; KIPAS &#9679; BEBAN &#9679; STEADY STATE &#9679; EULER &#9679; KONSTANTA WAKTU &#9679; GANGGUAN &#9679;</span><span>SUHU CPU &#9679; KIPAS &#9679; BEBAN &#9679; STEADY STATE &#9679; EULER &#9679; KONSTANTA WAKTU &#9679; GANGGUAN &#9679;</span></div>
+</div>
+
+<section class="section" aria-labelledby="menu-title">
+  <div class="section-head"><span class="num">01</span><h2 id="menu-title">Jelajahi</h2></div>
+  <div class="grid-3">
+    <a class="card nav-card" data-tone="purple" href="{{ url_for('simulator') }}">
+      <span class="nav-card-icon">▶</span>
+      <h3>Simulator</h3>
+      <p>Enam skenario beban, tujuh parameter, grafik dengan penanda, dan penjelasan otomatis.</p>
+      <span class="nav-card-go">Buka halaman &rarr;</span>
+    </a>
+    <a class="card nav-card" data-tone="cyan" href="{{ url_for('kipas') }}">
+      <span class="nav-card-icon">✻</span>
+      <h3>Pengaruh Kipas</h3>
+      <p>Bandingkan suhu steady state pada berbagai kecepatan kipas dan cari kipas minimum yang aman.</p>
+      <span class="nav-card-go">Buka halaman &rarr;</span>
+    </a>
+    <a class="card nav-card" data-tone="pink" href="{{ url_for('model') }}">
+      <span class="nav-card-icon">∑</span>
+      <h3>Cara Kerja Model</h3>
+      <p>Persamaan, asumsi, daftar variabel, dan rumus tiap sinyal beban.</p>
+      <span class="nav-card-go">Buka halaman &rarr;</span>
+    </a>
+  </div>
+</section>
+
+<section class="section" aria-labelledby="preset-title">
+  <div class="section-head"><span class="num">02</span><h2 id="preset-title">Coba kasus cepat</h2></div>
+  <div class="grid-3 preset-grid">
+    {% for preset in presets %}
+    <a class="card preset-card" href="{{ url_for('simulator', preset=loop.index0) }}">
+      <h3>{{ preset.name }}</h3>
+      <p>{{ preset.hint }}</p>
+      <span class="nav-card-go">Jalankan &rarr;</span>
+    </a>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="section" aria-labelledby="how-title">
+  <div class="section-head"><span class="num">03</span><h2 id="how-title">Cara pakai</h2></div>
+  <div class="grid-3">
+    <article class="card step" data-tone="cyan"><span class="step-no">1</span><h3>Pilih skenario</h3><p>Step, impulse, ramp, sinusoida, steady state, atau gangguan suhu ruangan.</p></article>
+    <article class="card step" data-tone="pink"><span class="step-no">2</span><h3>Geser parameter</h3><p>Ubah kecepatan kipas, gain beban, suhu ruangan, dan langkah waktu Euler.</p></article>
+    <article class="card step" data-tone="blue"><span class="step-no">3</span><h3>Baca penjelasan</h3><p>Status suhu, metrik, dan teks penjelasan langsung menyesuaikan angka hasil.</p></article>
+  </div>
+</section>
+{% endblock %}

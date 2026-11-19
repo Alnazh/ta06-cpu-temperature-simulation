@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block title %}Cara Kerja Model{% endblock %}
+
+{% block content %}
+<section class="page-head">
+  <p class="tag">Model</p>
+  <h1>Cara kerja modelnya</h1>
+  <p class="lead">Dari neraca energi sampai persamaan yang dihitung dengan metode Euler.</p>
+</section>
+
+<div class="page">
+  <div class="grid-3">
+    <article class="card step" data-tone="cyan">
+      <span class="step-no">1</span>
+      <h3>Neraca energi</h3>
+      <p>CPU menyimpan panas (kapasitas C). Panas masuk dari beban kerja, panas keluar lewat kipas dan casing ke udara ruangan.</p>
+      <p class="formula">C dT/dt = P &minus; h (T &minus; T<sub>amb</sub>)</p>
+    </article>
+    <article class="card step" data-tone="pink">
+      <span class="step-no">2</span>
+      <h3>Disederhanakan</h3>
+      <p>Dibagi C, jadilah ODE orde 1 dengan k = h/C. Kecepatan kipas hanya mengubah nilai k.</p>
+      <p class="formula">dT/dt = &minus;k (T &minus; T<sub>amb</sub>) + g u(t)</p>
+    </article>
+    <article class="card step" data-tone="blue">
+      <span class="step-no">3</span>
+      <h3>Dihitung dengan Euler</h3>
+      <p>Suhu berikutnya = suhu sekarang + laju perubahan &times; &Delta;t. Dibandingkan dengan langkah sangat halus untuk melihat galatnya.</p>
+      <p class="formula">T<sub>n+1</sub> = T<sub>n</sub> + (dT/dt) &middot; &Delta;t</p>
+    </article>
+  </div>
+
+  <div class="grid-2">
+    <article class="card">
+      <h3 class="card-title">Steady state</h3>
+      <p>Saat dT/dt = 0, suhu berhenti berubah:</p>
+      <p class="formula">T<sub>ss</sub> = T<sub>amb</sub> + g u / k</p>
+      <p>Beban 0% membuat CPU sama dengan suhu ruangan. Beban 100% dengan kipas 50% memberi 30 + 0,0135 &times; 100 / 0,03 = 75 &deg;C.</p>
+    </article>
+    <article class="card">
+      <h3 class="card-title">Konstanta waktu</h3>
+      <p>Kecepatan menuju steady state ditentukan oleh &tau; = 1/k:</p>
+      <p class="formula">&tau; = 1 / k</p>
+      <p>Setelah &tau; suhu menempuh sekitar 63% perubahan, setelah 3&tau; sekitar 95%. Kipas lebih cepat memperbesar k sehingga &tau; makin kecil.</p>
+    </article>
+  </div>
+
+  <div class="card table-card">
+    <h3 class="card-title">Daftar variabel</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Simbol</th><th>Arti</th><th>Jenis</th></tr></thead>
+        <tbody>
+          <tr><td><code>T</code></td><td>Suhu CPU (&deg;C)</td><td>State &amp; controlled variable</td></tr>
+          <tr><td><code>u(t)</code></td><td>Beban CPU (%)</td><td>Sinyal kontrol</td></tr>
+          <tr><td><code>T<sub>amb</sub></code></td><td>Suhu ruangan (&deg;C)</td><td>Gangguan / konstanta</td></tr>
+          <tr><td><code>kipas</code></td><td>Kecepatan kipas (%)</td><td>Konstanta, menentukan k</td></tr>
+          <tr><td><code>k</code></td><td>Konstanta pendinginan = 0,015 + 0,03 &times; kipas/100</td><td>Parameter</td></tr>
+          <tr><td><code>g</code></td><td>Gain beban (&deg;C/detik per %)</td><td>Parameter</td></tr>
+          <tr><td><code>&tau;</code></td><td>Konstanta waktu = 1/k</td><td>Turunan</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card table-card">
+    <h3 class="card-title">Skenario beban</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Skenario</th><th>Sinyal u(t)</th><th>Steady state teori</th></tr></thead>
+        <tbody>
+          <tr><td>Steady state</td><td>0% terus, CPU mulai dari T<sub>0</sub></td><td>T<sub>amb</sub></td></tr>
+          <tr><td>Step</td><td>0% lalu 100% mulai detik 20</td><td>T<sub>amb</sub> + g &middot; 100 / k</td></tr>
+          <tr><td>Impulse</td><td>100% selama 5 detik (detik 20&ndash;25)</td><td>T<sub>amb</sub></td></tr>
+          <tr><td>Ramp</td><td>naik 2% tiap detik mulai detik 20, maksimum 100%</td><td>T<sub>amb</sub> + g &middot; 100 / k</td></tr>
+          <tr><td>Sinusoida</td><td>50 + 50 sin(2&pi;t/100 &minus; &pi;/2) %</td><td>rata-rata T<sub>amb</sub> + g &middot; 50 / k</td></tr>
+          <tr><td>Gangguan</td><td>0%, T<sub>amb</sub> naik pada detik 100</td><td>T<sub>amb</sub> + kenaikan</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 class="card-title">Asumsi model</h3>
+    <ul class="plain-list">
+      <li>CPU dan heatsink dianggap satu massa dengan suhu seragam, sehingga modelnya ODE (bukan PDE).</li>
+      <li>Kapasitas panas dan koefisien pembuangan panas konstan; kecepatan kipas dijaga tetap selama simulasi.</li>
+      <li>Pembuangan panas hanya mengikuti hukum pendinginan Newton; radiasi dan <i>thermal throttling</i> diabaikan.</li>
+      <li>Panas yang dihasilkan sebanding dengan beban CPU pada rentang 0&ndash;100%.</li>
+      <li>Parameter bersifat ilustrasi, bukan hasil pengukuran laptop tertentu.</li>
+    </ul>
+  </div>
+</div>
+{% endblock %}
