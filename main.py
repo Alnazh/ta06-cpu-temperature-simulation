@@ -1,21 +1,3 @@
-"""
-TA-06 Pemodelan dan Simulasi - Sistem Dinamik
-Studi kasus: Suhu CPU Laptop dengan Pendingin Kipas
-
-Model ODE orde 1:
-    dT/dt = -k (T - T_amb) + g * u(t),   k = K_BASE + K_FAN * kipas/100
-
-    T      : suhu CPU (C)                        -> state variable & controlled variable
-    T_amb  : suhu ruangan (C)                    -> input konstanta / gangguan
-    FAN    : kecepatan kipas (%)                 -> input konstanta (menentukan k)
-    k      : konstanta pendinginan (1/detik)     -> parameter
-    g      : gain beban (C/detik per % beban)    -> parameter
-    u(t)   : beban CPU (%)                       -> input sinyal kontrol
-
-Cara pakai:
-    python main.py          # simpan grafik ke folder outputs/
-    python main.py --show   # simpan sekaligus tampilkan jendela grafik
-"""
 import argparse
 import os
 import matplotlib
