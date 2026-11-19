@@ -1,0 +1,8 @@
+{% for name, label, lo, hi, step, unit, decimals in sliders %}
+<div class="slider"{% if name in scope %} data-only="{{ scope[name]|join(' ') }}"{% endif %}>
+  <label for="{{ name }}">{{ label }}</label>
+  <output for="{{ name }}"></output>
+  <input type="range" id="{{ name }}" name="{{ name }}" min="{{ lo }}" max="{{ hi }}" step="{{ step }}"
+         value="{{ defaults[name] }}" data-unit="{{ unit }}" data-decimals="{{ decimals }}">
+</div>
+{% endfor %}
